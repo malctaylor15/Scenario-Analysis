@@ -28,10 +28,22 @@ qgpd(0.95, xi = 0.2622, beta = 2549)
 Var_levels = seq(from = 0.99, to = 0.9999,by = 0.000099)
 
 Var_reg = quantile(linear_loss, Var_levels)
-GEV_Vars = qgev(Var_levels, xi = -0.)
-GP_Vars =  qgpd(Var_levels, )
+GEV_Vars = qgev(Var_levels, xi = 0.176, mu = 7400, beta = 2722)
+GP_Vars =  qgpd(Var_levels, xi = 5.65e-2, beta = 2.30e3 )
 
 
 again <- gevFit(full_loss, block = 125)
 again
 
+oncemore <- gpdFit(full_loss)
+oncemore
+
+all_data <- c(GEV_Vars, GP_Vars, Var_reg)
+
+max(all_data)
+
+plot(Var_levels, GEV_Vars, ylim = c(min(all_data), max(all_data)),type = 'l', col= 'red', lwd = 4)
+lines(Var_levels ,GP_Vars,type = 'l', col = 'blue' , lwd = 4)
+lines(Var_levels, Var_reg, type = 'l', col = 'green', lwd =4)
+
+legend("topleft", c("GEV", "GP", "VaR Empirical", "VaR Analytical"), lwd = 4, col = c("red", "blue", "green", "orange"))
