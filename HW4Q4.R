@@ -4,8 +4,8 @@ setwd("C:/Users/board/Desktop/Kaggle/Scenario Analysis")
 data <- read.csv("SP_500_Log_Returns_19600610_19871016.csv")
 
 # Create full loss portfolios 
-linear_loss <- -1000000* data[[4]]
-#full_loss <- 1000000*(exp(data[[4]]) -1)
+linear_loss <- -1000000* na.omit(data[[4]])
+#full_loss <- 1000000*(exp(na.omit(data[[4]]) ) -1)
 
 # Fit GEV parameters to the data 
 GEV_fit <- gevFit(linear_loss, block = 125)

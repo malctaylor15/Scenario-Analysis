@@ -1,13 +1,13 @@
-setwd("C:/Users/board/Desktop/Kaggle/Scenario Analysis/GL")
-Data <- read.csv("MSFT_AAPL_Log_Returns.csv",header=TRUE)
+setwd("C:/Users/board/Desktop/Kaggle/Scenario Analysis")
+Data <- read.csv("MSFT_AAPL_Log_Returns_20110831_20160901.csv",header=TRUE)
 
 ###############################################################################################
 ###Corporate Risk Management HW3 Q2 Part I###
 ############################################################################################
 
 #Log-returns
-MSFT_Log_R <- Data$MSFT.Log.Return[!is.na(Data$MSFT.Log.Return)] 
-APPL_Log_R <- Data$AAPL.Log.Return[!is.na(Data$AAPL.Log.Return)]
+MSFT_Log_R <- Data$MSFT_Log_Return[!is.na(Data$MSFT_Log_Return)] 
+APPL_Log_R <- Data$AAPL_Log_Return[!is.na(Data$AAPL_Log_Return)]
 
 #Portfolio parameters
 Val_Port <- 1000000 #Portfolio Value
@@ -128,4 +128,4 @@ Port_Dollar <- -Val_Port*weight_matrix # ct
    (sqrt(t(Port_Dollar)%*%cov_mat%*%Port_Dollar))*qnorm(Alpha)) #Lin VaR
 (K_VaR <- sqrt(K)*VaR) #K-day VaR
 (Reg_Cap <- 3*(sqrt(K/2)*VaR)) #Regulatory Capital Change
-(Loss_kplusdelta = -Port_Dollar[1]*Returns_sum1[K] -Port_Dollar[2]*Returns_sum2[K])
+(Loss_kplusdelta = Port_Dollar[1]*Returns_sum1[K] +Port_Dollar[2]*Returns_sum2[K])
