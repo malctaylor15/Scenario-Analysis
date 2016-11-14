@@ -4,5 +4,5 @@ GEV_datafile = 'max_block_value_full.csv';
 GP_data = csvread(GP_datafile);
 GEV_data = csvread(GEV_datafile);
 
-GEV_params = gevfit(GEV_data);
-GP_params = gpfit(GP_data);
+GEV_params = gevfit(GEV_data)
+GP_params = gpfit(GP_data)
