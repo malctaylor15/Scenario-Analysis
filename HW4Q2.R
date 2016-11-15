@@ -72,8 +72,10 @@ Port_Dollar <- -Val_Port*weight_matrix # ct
 ##########################################################################
 #########################################################################
 library(MASS)
+ 
 
-
+multiVar <- function (mu_mat, cov_mat, K, weight_matrix, ValPort, Alpha = 0.95, lambda = 0.97){
+  
 # Reset mu, covariance matrix for EWMA 
 mu_MSFT <- NULL
 mu_APPL <- NULL
@@ -122,10 +124,39 @@ for(i in 1:(K-1)) { # For each day after the shock
 }
 
 # VaR Calculations 
-weight_matrix <- matrix(c(W_MSFT,W_APPL),nrow=2,ncol=1) #MSFT AAPL weight matrix
+# weight_matrix <- matrix(c(W_MSFT,W_APPL),nrow=2,ncol=1) #MSFT AAPL weight matrix
 Port_Dollar <- -Val_Port*weight_matrix # ct
 (VaR <- (t(Port_Dollar)%*%mu_mat) + 
    (sqrt(t(Port_Dollar)%*%cov_mat%*%Port_Dollar))*qnorm(Alpha)) #Lin VaR
 (K_VaR <- sqrt(K)*VaR) #K-day VaR
-(Reg_Cap <- 3*(sqrt(K/2)*VaR)) #Regulatory Capital Change
+# (Reg_Cap <- 3*(sqrt(K/2)*VaR)) #Regulatory Capital Change
 (Loss_kplusdelta = Port_Dollar[1]*Returns_sum1[K] +Port_Dollar[2]*Returns_sum2[K])
+
+return (c(Loss_kplusdelta, K_VaR))
+}
+
+M_hat <-  50000
+# Pre allocate space 
+results <- data.frame(matrix(0,nrow = M_hat, ncol = 2))
+names(results)[1:2] <- c("Loss", "K_Var")
+# MC
+
+for (sample in 1:M_hat){ 
+
+results[sample,] <- multiVar(mu_mat, cov_mat, K, weight_matrix, ValPort)
+}
+
+# Exceedance 
+# Kday Var Exceedances
+(K_Var_exceedances <- sum(results[[2]] > rep(K_VaR,M_hat)) )
+# Regulatory Cap exceedances 
+(Reg_cap_exceedances <- sum(results[[2]] > rep(Reg_Cap,M_hat)) )
+
+# Quick Plots... 
+hist(results[[2]], breaks = 40)
+abline(v = K_VaR, col = "blue", lwd = 3)
+abline(v = Reg_Cap, col = "red", lwd = 3)
+
+# Frequencies 
+(100/M_hat) * K_Var_exceedances
+(100/M_hat) * Reg_cap_exceedances
